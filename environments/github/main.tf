@@ -25,3 +25,12 @@ module "node-app" {
   visibility  = "public"
 }
 
+module "k8s" {
+  source  = "mineiros-io/repository/github"
+  version = "~> 0.18.0"
+
+  name        = "k8s"
+  description = "Kubernetes manifests to be used by my DevOps studies"
+  visibility  = "public"
+}
+
