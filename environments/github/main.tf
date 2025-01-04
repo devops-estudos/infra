@@ -7,21 +7,21 @@ module "infra" {
   visibility  = "public"
 }
 
-module "python-app" {
+module "adonis-app" {
   source  = "mineiros-io/repository/github"
   version = "~> 0.18.0"
 
-  name        = "python-app"
-  description = "A simple Python application to be used by my DevOps studies"
+  name        = "adonis-app"
+  description = "A simple Adonis application to be used by my DevOps studies"
   visibility  = "public"
 }
 
-module "node-app" {
+module "nestjs-app" {
   source  = "mineiros-io/repository/github"
   version = "~> 0.18.0"
 
-  name        = "node-app"
-  description = "A simple Node.js application to be used by my DevOps studies"
+  name        = "nestjs-app"
+  description = "A simple Nest JS application to be used by my DevOps studies"
   visibility  = "public"
 }
 
@@ -33,4 +33,3 @@ module "k8s" {
   description = "Kubernetes manifests to be used by my DevOps studies"
   visibility  = "public"
 }
-

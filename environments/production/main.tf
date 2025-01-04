@@ -48,3 +48,39 @@ module "eks" {
     Terraform   = "true"
   }
 }
+resource "aws_iam_policy" "policy" {
+  name        = "AmazonElastiContainerServiceWriteAccess"
+  path        = "/"
+  description = "Amazon Elastic Container Service Private Write Access"
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Effect = "Allow"
+        Action = [
+          # "ecr:GetDownloadUrlForLayer",
+          # "ecr:BatchGetImage",
+          # "ecr:BatchCheckLayerAvailability",
+          "ecr:PutImage",
+          # "ecr:InitiateLayerUpload",
+          # "ecr:UploadLayerPart",
+          # "ecr:CompleteLayerUpload",
+        ]
+        Resource = "*"
+      },
+    ]
+  })
+}
+
+module "github-oidc" {
+  source  = "terraform-module/github-oidc-provider/aws"
+  version = "~> 1"
+
+  create_oidc_provider = true
+  create_oidc_role     = true
+
+  # repositories              = ["devops-estudos/infra","devops-estudos/adonis-app", "devops-estudos/nestjs-app", "devops-estudos/k8s"]
+  repositories              = ["devops-estudos/adonis-app", "devops-estudos/nestjs-app"]
+  oidc_role_attach_policies = [aws_iam_policy.policy.arn]
+}
