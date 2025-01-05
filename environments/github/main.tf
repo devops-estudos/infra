@@ -33,3 +33,9 @@ module "k8s" {
   description = "Kubernetes manifests to be used by my DevOps studies"
   visibility  = "public"
 }
+
+# Adicionei na mão na github, não tá sendo gerado pelo terraform
+# resource "github_actions_organization_secret" "oidc_arn_role" {
+#   visibility      = "all"
+#   secret_name     = "OIDC_ARN_ROLE"
+# }

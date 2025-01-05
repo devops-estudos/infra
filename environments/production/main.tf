@@ -1,5 +1,6 @@
 locals {
-  environment = "production"
+  environment  = "production"
+  repositories = ["devops-estudos/infra", "devops-estudos/adonis-app", "devops-estudos/nestjs-app", "devops-estudos/k8s"]
 }
 
 module "vpc" {
@@ -48,6 +49,7 @@ module "eks" {
     Terraform   = "true"
   }
 }
+
 resource "aws_iam_policy" "policy" {
   name        = "AmazonElastiContainerServiceWriteAccess"
   path        = "/"
@@ -59,20 +61,18 @@ resource "aws_iam_policy" "policy" {
       {
         Effect = "Allow"
         Action = [
-          # "ecr:GetDownloadUrlForLayer",
-          # "ecr:BatchGetImage",
-          # "ecr:BatchCheckLayerAvailability",
+          "ecr:GetAuthorizationToken",
           "ecr:PutImage",
-          # "ecr:InitiateLayerUpload",
-          # "ecr:UploadLayerPart",
-          # "ecr:CompleteLayerUpload",
+          "ecr:InitiateLayerUpload",
+          "ecr:CompleteLayerUpload",
+          "ecr:UploadLayerPart",
+          "ecr:BatchCheckLayerAvailability",
         ]
         Resource = "*"
       },
     ]
   })
 }
-
 module "github-oidc" {
   source  = "terraform-module/github-oidc-provider/aws"
   version = "~> 1"
@@ -80,7 +80,39 @@ module "github-oidc" {
   create_oidc_provider = true
   create_oidc_role     = true
 
-  # repositories              = ["devops-estudos/infra","devops-estudos/adonis-app", "devops-estudos/nestjs-app", "devops-estudos/k8s"]
-  repositories              = ["devops-estudos/adonis-app", "devops-estudos/nestjs-app"]
+  repositories              = local.repositories
   oidc_role_attach_policies = [aws_iam_policy.policy.arn]
+}
+
+module "ecr" {
+  for_each = {
+    for idx, repo in local.repositories : idx => repo if length(regexall("app", repo)) > 0
+  }
+
+  source = "terraform-aws-modules/ecr/aws"
+
+  repository_name = each.value
+
+  repository_lifecycle_policy = jsonencode({
+    rules = [
+      {
+        rulePriority = 1,
+        description  = "Keep last 30 images",
+        selection = {
+          tagStatus     = "tagged",
+          tagPrefixList = ["v"],
+          countType     = "imageCountMoreThan",
+          countNumber   = 30
+        },
+        action = {
+          type = "expire"
+        }
+      }
+    ]
+  })
+
+  tags = {
+    Terraform   = "true"
+    Environment = local.environment
+  }
 }
