@@ -14,8 +14,11 @@ module "vpc" {
   public_subnets          = ["10.0.101.0/24", "10.0.102.0/24", "10.0.103.0/24"]
   map_public_ip_on_launch = true
 
+  public_subnet_tags = {
+    "kubernetes.io/role/elb" = "1"
+  }
+
   tags = {
-    Terraform   = "true"
     Environment = local.environment
   }
 }
@@ -29,6 +32,15 @@ module "eks" {
 
   cluster_endpoint_public_access           = true
   enable_cluster_creator_admin_permissions = true
+
+  bootstrap_self_managed_addons = false
+  cluster_addons = {
+    coredns                = {}
+    eks-pod-identity-agent = {}
+    kube-proxy             = {}
+    vpc-cni                = {}
+    metrics-server         = {}
+  }
 
   eks_managed_node_groups = {
     main = {
@@ -46,9 +58,9 @@ module "eks" {
 
   tags = {
     Environment = local.environment
-    Terraform   = "true"
   }
 }
+
 
 resource "aws_iam_policy" "policy" {
   name        = "AmazonElastiContainerServiceWriteAccess"
@@ -112,7 +124,6 @@ module "ecr" {
   })
 
   tags = {
-    Terraform   = "true"
     Environment = local.environment
   }
 }
