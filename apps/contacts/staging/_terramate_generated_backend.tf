@@ -4,7 +4,7 @@ terraform {
   backend "remote" {
     organization = "devops-studies"
     workspaces {
-      name = "production"
+      name = "staging"
     }
   }
 }

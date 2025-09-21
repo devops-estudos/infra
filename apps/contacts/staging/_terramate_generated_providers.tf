@@ -5,7 +5,7 @@ provider "aws" {
   default_tags {
     tags = {
       CreatedBy   = "terramate"
-      Environment = "production"
+      Environment = "staging"
       ManagedBy   = "terramate"
       Owner       = "squad-contacts"
       Project     = "contacts"
