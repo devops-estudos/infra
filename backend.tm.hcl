@@ -1,4 +1,4 @@
-generate_hcl "_terramate_generated_backend.tf" {
+generate_hcl "backend.tf" {
   content {
     terraform {
       backend "remote" {

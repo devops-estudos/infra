@@ -1,4 +1,4 @@
-generate_hcl "_terramate_generated_providers.tf" {
+generate_hcl "providers.tf" {
   content {
     provider "aws" {
       region = "us-east-1"
