@@ -31,31 +31,3 @@ provider "kubernetes" {
   host                   = module.eks.cluster_endpoint
   token                  = data.aws_eks_cluster_auth.cluster_auth.token
 }
-data "kubernetes_secret" "argocd-initial-admin-secret" {
-  depends_on = [
-    module.eks_blueprints_addons.argocd,
-  ]
-  metadata {
-    name      = "argocd-initial-admin-secret"
-    namespace = "argocd"
-  }
-}
-data "kubernetes_service" "argocd-server" {
-  depends_on = [
-    module.eks_blueprints_addons.argocd,
-  ]
-  metadata {
-    name      = "argo-cd-argocd-server"
-    namespace = "argocd"
-  }
-}
-provider "argocd" {
-  insecure    = true
-  password    = data.kubernetes_secret.argocd-initial-admin-secret.data.password
-  plain_text  = true
-  server_addr = data.kubernetes_service.argocd-server.status[0].load_balancer[0].ingress[0].hostname
-  username    = "admin"
-}
-provider "github" {
-  owner = "devops-estudos"
-}
