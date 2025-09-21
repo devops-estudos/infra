@@ -1,0 +1,3 @@
+globals {
+  organization = "devops-studies"
+}

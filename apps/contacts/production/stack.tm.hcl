@@ -1,5 +1,8 @@
+globals {
+  environment = "production"
+}
+
 stack {
-  name        = "production"
-  description = "production"
-  id          = "fa17dd92-1e28-44ce-bfe2-085d523ae6cc"
+  name        = "contacts"
+  description = "This stack defines awesome resources"
 }
