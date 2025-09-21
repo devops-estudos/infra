@@ -3,6 +3,6 @@ globals {
 }
 
 stack {
-  name        = "contacts"
+  name        = "apps/contacts/production"
   description = "This stack defines awesome resources"
 }

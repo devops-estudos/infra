@@ -1,23 +1,10 @@
-globals {
-  project = "contacts"
-  owner   = "squad-contacts"
-}
-
 generate_hcl "_terramate_generated_main.tf" {
   content {
-    module "repository" {
-      source  = "mineiros-io/repository/github"
-      version = "~> 0.18.0"
-
-      name       = "${global.project}"
-      visibility = "public"
-    }
-
     module "vpc" {
       source  = "terraform-aws-modules/vpc/aws"
       version = "6.0.1"
 
-      name = "${global.project}-vpc"
+      name = "${global.project}-us-east-1-${global.environment}-vpc"
       cidr = "10.0.0.0/16"
 
       azs             = ["us-east-1a", "us-east-1b", "us-east-1c"]
@@ -39,7 +26,7 @@ generate_hcl "_terramate_generated_main.tf" {
       subnet_ids = module.vpc.public_subnets
       vpc_id     = module.vpc.vpc_id
 
-      name               = "${global.project}-eks"
+      name               = "${global.project}-us-east-1-${global.environment}-eks"
       kubernetes_version = "1.33"
 
       endpoint_public_access                   = true

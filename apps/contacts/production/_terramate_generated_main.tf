@@ -1,11 +1,5 @@
 // TERRAMATE: GENERATED AUTOMATICALLY DO NOT EDIT
 
-module "repository" {
-  name       = "contacts"
-  source     = "mineiros-io/repository/github"
-  version    = "~> 0.18.0"
-  visibility = "public"
-}
 module "vpc" {
   azs = [
     "us-east-1a",
@@ -14,7 +8,7 @@ module "vpc" {
   ]
   cidr                    = "10.0.0.0/16"
   map_public_ip_on_launch = true
-  name                    = "contacts-vpc"
+  name                    = "contacts-us-east-1-production-vpc"
   private_subnets = [
     "10.0.1.0/24",
     "10.0.2.0/24",
@@ -58,7 +52,7 @@ module "eks" {
   enable_irsa                              = true
   endpoint_public_access                   = true
   kubernetes_version                       = "1.33"
-  name                                     = "contacts-eks"
+  name                                     = "contacts-us-east-1-production-eks"
   source                                   = "terraform-aws-modules/eks/aws"
   subnet_ids                               = module.vpc.public_subnets
   version                                  = "21.2.0"
