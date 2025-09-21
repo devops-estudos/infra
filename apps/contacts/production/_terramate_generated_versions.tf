@@ -7,9 +7,6 @@ terraform {
       source  = "argoproj-labs/argocd"
       version = "7.11.0"
     }
-    github = {
-      source  = "integrations/github"
-      version = "6.6.0"
-    }
+    
   }
 }
