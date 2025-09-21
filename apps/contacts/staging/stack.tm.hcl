@@ -1,8 +1,8 @@
 globals {
-  environment = "production"
+  environment = "staging"
 }
 
 stack {
-  name        = "apps/contacts/production"
+  name        = "apps/contacts/staging"
   description = "This stack defines awesome resources"
 }
