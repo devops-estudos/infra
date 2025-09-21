@@ -68,7 +68,6 @@ module "github-oidc" {
     "arn:aws:iam::aws:policy/AdministratorAccess",
   ]
   repositories = [
-    module.repository.full_name,
   ]
   source  = "terraform-module/github-oidc-provider/aws"
   version = "2.2.1"
