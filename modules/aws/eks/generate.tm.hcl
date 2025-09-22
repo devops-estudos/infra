@@ -75,11 +75,11 @@ generate_hcl "main.tf" {
       eks_managed_node_groups = {
         main = {
           capacity_type = "SPOT"
-          desired_size  = 1
+          desired_size  = 2
           instance_types = [
             "t3a.medium",
           ]
-          max_size = 1
+          max_size = 3
           min_size = 1
           security_group_ingress_rules = {
             argocd = {

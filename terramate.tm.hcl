@@ -46,7 +46,7 @@ script "deploy" {
     name        = "deploy"
     description = "Initialize, validate and deploy Terraform stacks"
     commands = [
-      [let.provisioner, "init", "-reconfigure", "-lock-timeout=5m"],
+      [let.provisioner, "init", "-lock-timeout=5m"],
       [let.provisioner, "validate"],
       [let.provisioner, "plan", "-out", "out.tfplan", "-lock=false", {
         enable_sharing = true

@@ -10,7 +10,7 @@ all: help
 
 ##@ Terramate
 deploy:  ## Deploy the infrastructure
-	@terramate script run deploy
+	@terramate script run --changed deploy
 list:  ## List the stacks
 	@terramate list
 order:  ## Show the running order execution
