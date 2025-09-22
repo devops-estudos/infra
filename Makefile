@@ -10,6 +10,7 @@ all: help
 
 ##@ Terramate
 deploy:  ## Deploy the infrastructure
+	@terramate generate
 	@terramate script run --changed deploy
 list:  ## List the stacks
 	@terramate list
@@ -21,6 +22,8 @@ format:  ## Format the Terramate code
 	@terramate fmt
 destroy:  ## Destroy the infrastructure
 	@terramate run --reverse -- terraform destroy
+generate-ids:  ## Generate the IDs of the stacks
+	@terramate create --ensure-stack-ids
 
 ##@ Utilities
 help:  ## Display this help

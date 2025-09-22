@@ -1,15 +1,22 @@
+# Import the Terramate files
+
+import {
+  source = "./modules/*/generate.tm.hcl"
+}
+
+import {
+  source = "./modules/**/*/generate.tm.hcl"
+}
+
+import {
+  source = "./modules/**/**/*/generate.tm.hcl"
+}
+
 terramate {
   config {
     cloud {
       organization = "devops-estudos"
       location     = "us"
-    }
-
-    change_detection {
-      git {
-        untracked   = true
-        uncommitted = true
-      }
     }
 
     disable_safeguards = ["git"]
@@ -25,18 +32,6 @@ globals {
   organization = "devops-studies"
 }
 
-import {
-  source = "./modules/aws/vpc/generate.tm.hcl"
-}
-
-import {
-  source = "./modules/aws/eks/generate.tm.hcl"
-}
-
-import {
-  source = "./modules/aws/eks/addons/generate.tm.hcl"
-}
-
 script "deploy" {
   description = "Run a Terraform/Tofu deployment"
   lets {
@@ -46,7 +41,7 @@ script "deploy" {
     name        = "deploy"
     description = "Initialize, validate and deploy Terraform stacks"
     commands = [
-      [let.provisioner, "init", "-lock-timeout=5m"],
+      [let.provisioner, "init", "-reconfigure", "-lock-timeout=5m"],
       [let.provisioner, "validate"],
       [let.provisioner, "plan", "-out", "out.tfplan", "-lock=false", {
         enable_sharing = true

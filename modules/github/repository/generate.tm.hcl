@@ -1,3 +1,12 @@
+globals {
+  repositories = {
+    contacts = {
+      name        = "contacts"
+      description = "Contacts repository"
+    }
+  }
+}
+
 # backend.tf
 generate_hcl "backend.tf" {
   stack_filter {
@@ -8,7 +17,7 @@ generate_hcl "backend.tf" {
       backend "remote" {
         organization = global.organization
         workspaces {
-          name = "${global.env}-${global.region}-repository"
+          name = "github-repository"
         }
       }
     }
@@ -21,9 +30,6 @@ generate_hcl "provider.tf" {
     project_paths = ["**/repository"]
   }
   content {
-    provider "aws" {
-      region = global.region
-    }
   }
 }
 
@@ -33,26 +39,14 @@ generate_hcl "main.tf" {
     project_paths = ["**/repository"]
   }
   content {
+    module "repository" {
+      for_each = global.repositories
 
-  }
-}
+      source  = "mineiros-io/repository/github"
+      version = "~> 0.18.0"
 
-generate_hcl "output.tf" {
-  stack_filter {
-    project_paths = ["envs/**/eks"]
-  }
-  content {
-    output "cluster_name" {
-      value = module.eks.cluster_name
-    }
-    output "cluster_endpoint" {
-      value = module.eks.cluster_endpoint
-    }
-    output "cluster_version" {
-      value = module.eks.cluster_version
-    }
-    output "oidc_provider_arn" {
-      value = module.eks.oidc_provider_arn
+      name        = each.value.name
+      description = each.value.description
     }
   }
 }
