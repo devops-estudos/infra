@@ -56,6 +56,7 @@ generate_hcl "main.tf" {
 
       name        = global.name
       description = global.description
+      visibility  = "public"
     }
   }
 }

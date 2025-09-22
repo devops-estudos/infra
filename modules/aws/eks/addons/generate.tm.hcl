@@ -122,6 +122,7 @@ generate_hcl "main.tf" {
         chart_version = "8.5.4"
         values        = [file("./configs/argocd.yml")]
       }
+      
       enable_argo_rollouts = true
       argo_rollouts = {
         repository    = "https://argoproj.github.io/argo-helm"

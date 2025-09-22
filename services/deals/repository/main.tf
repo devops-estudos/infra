@@ -5,4 +5,5 @@ module "repository" {
   name        = "deals"
   source      = "mineiros-io/repository/github"
   version     = "~> 0.18.0"
+  visibility  = "public"
 }
