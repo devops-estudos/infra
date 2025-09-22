@@ -1,12 +1,3 @@
-globals {
-  repositories = {
-    contacts = {
-      name        = "contacts"
-      description = "Contacts repository"
-    }
-  }
-}
-
 # backend.tf
 generate_hcl "backend.tf" {
   stack_filter {
@@ -17,7 +8,7 @@ generate_hcl "backend.tf" {
       backend "remote" {
         organization = global.organization
         workspaces {
-          name = "github-repository"
+          name = "${global.name}-repository"
         }
       }
     }
@@ -30,6 +21,26 @@ generate_hcl "provider.tf" {
     project_paths = ["**/repository"]
   }
   content {
+    provider "github" {
+      owner = global.owner
+    }
+  }
+}
+
+generate_hcl "versions.tf" {
+  stack_filter {
+    project_paths = ["**/repository"]
+  }
+  content {
+    terraform {
+      required_version = ">= 1.3.2"
+      required_providers {
+        github = {
+          source  = "integrations/github"
+          version = "~> 5.0"
+        }
+      }
+    }
   }
 }
 
@@ -40,13 +51,11 @@ generate_hcl "main.tf" {
   }
   content {
     module "repository" {
-      for_each = global.repositories
-
       source  = "mineiros-io/repository/github"
       version = "~> 0.18.0"
 
-      name        = each.value.name
-      description = each.value.description
+      name        = global.name
+      description = global.description
     }
   }
 }
