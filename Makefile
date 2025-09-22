@@ -11,7 +11,7 @@ all: help
 ##@ Terramate
 deploy:  ## Deploy the infrastructure
 	@terramate generate
-	@terramate script run --changed deploy
+	@terramate script run --changed --parallel 5 deploy
 list:  ## List the stacks
 	@terramate list
 order:  ## Show the running order execution
