@@ -119,8 +119,14 @@ generate_hcl "main.tf" {
       enable_argocd = true
       argocd = {
         repository    = "https://argoproj.github.io/argo-helm"
-        chart_version = "8.3.7"
+        chart_version = "8.5.4"
         values        = [file("./configs/argocd.yml")]
+      }
+      enable_argo_rollouts = true
+      argo_rollouts = {
+        repository    = "https://argoproj.github.io/argo-helm"
+        chart_version = "2.40.4"
+        values        = []
       }
 
       enable_aws_load_balancer_controller = true

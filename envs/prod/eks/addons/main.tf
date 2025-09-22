@@ -1,9 +1,15 @@
 // TERRAMATE: GENERATED AUTOMATICALLY DO NOT EDIT
 
 module "addons" {
+  argo_rollouts = {
+    chart_version = "2.40.4"
+    repository    = "https://argoproj.github.io/argo-helm"
+    values = [
+    ]
+  }
   argocd = {
     repository    = "https://argoproj.github.io/argo-helm"
-    chart_version = "8.3.7"
+    chart_version = "8.5.4"
     values = [
       file("./configs/argocd.yml"),
     ]
@@ -27,6 +33,7 @@ module "addons" {
   cluster_endpoint                    = data.terraform_remote_state.eks.outputs.cluster_endpoint
   cluster_name                        = data.terraform_remote_state.eks.outputs.cluster_name
   cluster_version                     = data.terraform_remote_state.eks.outputs.cluster_version
+  enable_argo_rollouts                = true
   enable_argocd                       = true
   enable_aws_gateway_api_controller   = true
   enable_aws_load_balancer_controller = true
