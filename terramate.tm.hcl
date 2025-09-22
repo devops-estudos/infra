@@ -5,6 +5,13 @@ terramate {
       location     = "us"
     }
 
+    change_detection {
+      git {
+        untracked   = true
+        uncommitted = true
+      }
+    }
+
     disable_safeguards = ["git"]
 
     experiments = [
@@ -19,15 +26,15 @@ globals {
 }
 
 import {
-  source = "./modules/vpc/generate.tm.hcl"
+  source = "./modules/aws/vpc/generate.tm.hcl"
 }
 
 import {
-  source = "./modules/eks/generate.tm.hcl"
+  source = "./modules/aws/eks/generate.tm.hcl"
 }
 
 import {
-  source = "./modules/eks/addons/generate.tm.hcl"
+  source = "./modules/aws/eks/addons/generate.tm.hcl"
 }
 
 script "deploy" {

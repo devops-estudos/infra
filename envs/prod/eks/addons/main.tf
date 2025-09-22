@@ -1,24 +1,13 @@
 // TERRAMATE: GENERATED AUTOMATICALLY DO NOT EDIT
 
-data "terraform_remote_state" "vpc" {
-  backend = "remote"
-  config = {
-    organization = "devops-studies"
-    workspaces = {
-      name = "dev-us-east-1-vpc"
-    }
-  }
-}
-data "terraform_remote_state" "eks" {
-  backend = "remote"
-  config = {
-    organization = "devops-studies"
-    workspaces = {
-      name = "dev-us-east-1-eks"
-    }
-  }
-}
 module "addons" {
+  argocd = {
+    repository    = "https://argoproj.github.io/argo-helm"
+    chart_version = "8.3.7"
+    values = [
+      file("./configs/argocd.yml"),
+    ]
+  }
   aws_gateway_api_controller = {
     set = [
       {
@@ -38,6 +27,7 @@ module "addons" {
   cluster_endpoint                    = data.terraform_remote_state.eks.outputs.cluster_endpoint
   cluster_name                        = data.terraform_remote_state.eks.outputs.cluster_name
   cluster_version                     = data.terraform_remote_state.eks.outputs.cluster_version
+  enable_argocd                       = true
   enable_aws_gateway_api_controller   = true
   enable_aws_load_balancer_controller = true
   oidc_provider_arn                   = data.terraform_remote_state.eks.outputs.oidc_provider_arn
