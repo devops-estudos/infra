@@ -1,7 +1,7 @@
 # backend.tf
 generate_hcl "backend.tf" {
   stack_filter {
-    project_paths = ["envs/**/eks"]
+    project_paths = ["**/eks"]
   }
   content {
     terraform {
@@ -30,7 +30,7 @@ generate_hcl "provider.tf" {
 # main.tf
 generate_hcl "main.tf" {
   stack_filter {
-    project_paths = ["envs/**/eks"]
+    project_paths = ["**/eks"]
   }
   content {
     data "terraform_remote_state" "vpc" {
@@ -99,7 +99,7 @@ generate_hcl "main.tf" {
 
 generate_hcl "output.tf" {
   stack_filter {
-    project_paths = ["envs/**/eks"]
+    project_paths = ["**/eks"]
   }
   content {
     output "cluster_name" {

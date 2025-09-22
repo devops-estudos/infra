@@ -12,6 +12,5 @@ stack {
 }
 
 globals {
-  name        = "deals"
   description = "Deals repository"
 }
