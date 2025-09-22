@@ -14,6 +14,22 @@ terramate {
   }
 }
 
+globals {
+  organization = "devops-studies"
+}
+
+import {
+  source = "./modules/vpc/generate.tm.hcl"
+}
+
+import {
+  source = "./modules/eks/generate.tm.hcl"
+}
+
+import {
+  source = "./modules/eks/addons/generate.tm.hcl"
+}
+
 script "deploy" {
   description = "Run a Terraform/Tofu deployment"
   lets {
@@ -23,7 +39,7 @@ script "deploy" {
     name        = "deploy"
     description = "Initialize, validate and deploy Terraform stacks"
     commands = [
-      [let.provisioner, "init", "-lock-timeout=5m"],
+      [let.provisioner, "init", "-reconfigure", "-lock-timeout=5m"],
       [let.provisioner, "validate"],
       [let.provisioner, "plan", "-out", "out.tfplan", "-lock=false", {
         enable_sharing = true
@@ -34,10 +50,4 @@ script "deploy" {
       }],
     ]
   }
-}
-
-sharing_backend "default" {
-  type     = terraform
-  filename = "sharing_generated.tf"
-  command  = ["terraform", "output", "-json"]
 }

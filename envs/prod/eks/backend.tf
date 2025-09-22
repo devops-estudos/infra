@@ -4,7 +4,7 @@ terraform {
   backend "remote" {
     organization = "devops-studies"
     workspaces {
-      name = "prod"
+      name = "dev-us-east-1-eks"
     }
   }
 }

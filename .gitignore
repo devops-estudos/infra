@@ -45,5 +45,6 @@ out/
 .env
 
 .terraform.lock.hcl
+out.tfplan
 
 .tool-versions
