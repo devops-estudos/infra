@@ -118,7 +118,7 @@ generate_hcl "main.tf" {
       argo_rollouts = {
         repository    = "https://argoproj.github.io/argo-helm"
         chart_version = "2.40.4"
-        values        = []
+        values        = [file("./configs/argoc-rollouts.yml")]
       }
 
       enable_aws_load_balancer_controller = true
@@ -185,12 +185,24 @@ generate_file "configs/argocd.yml" {
   EOF
 }
 
+generate_file "configs/argoc-rollouts.yml" {
+  stack_filter {
+    project_paths = ["envs/**/eks/addons"]
+  }
+
+  content = <<-EOF
+  controller:
+    extraArgs: ["--traefik-api-group=traefik.io", "--traefik-api-version=traefik.io/v1alpha1"]
+  EOF
+}
+
 generate_file "configs/traefik.yml" {
   stack_filter {
     project_paths = ["envs/**/eks/addons"]
   }
 
   content = <<-EOF
+  # yaml-language-server: $schema=https://www.schemastore.org/traefik-v3.json
   ingressRoute:
     dashboard:
       enabled: true
@@ -203,10 +215,9 @@ generate_file "configs/traefik.yml" {
       service.beta.kubernetes.io/aws-load-balancer-nlb-target-type: ip
       service.beta.kubernetes.io/aws-load-balancer-scheme: internet-facing
   log:
-    level: DEBUG
     format: json
-  accessLogs:
-    enabled: true
+    level: DEBUG
+  accessLog:
     format: json
   EOF
 }

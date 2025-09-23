@@ -70,6 +70,7 @@ generate_hcl "main.tf" {
         vpc-cni = {
           before_compute = true
         }
+        datadog_operator = {}
       }
 
       eks_managed_node_groups = {

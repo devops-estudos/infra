@@ -2,9 +2,10 @@
 
 module "addons" {
   argo_rollouts = {
-    chart_version = "2.40.4"
     repository    = "https://argoproj.github.io/argo-helm"
+    chart_version = "2.40.4"
     values = [
+      file("./configs/argoc-rollouts.yml"),
     ]
   }
   argocd = {
