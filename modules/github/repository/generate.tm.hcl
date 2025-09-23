@@ -1,7 +1,7 @@
 # backend.tf
 generate_hcl "backend.tf" {
   stack_filter {
-    project_paths = ["**/repository"]
+    project_paths = ["**/github/repository"]
   }
   content {
     terraform {
@@ -18,7 +18,7 @@ generate_hcl "backend.tf" {
 # provider.tf
 generate_hcl "provider.tf" {
   stack_filter {
-    project_paths = ["**/repository"]
+    project_paths = ["**/github/repository"]
   }
   content {
     provider "github" {
@@ -29,7 +29,7 @@ generate_hcl "provider.tf" {
 
 generate_hcl "versions.tf" {
   stack_filter {
-    project_paths = ["**/repository"]
+    project_paths = ["**/github/repository"]
   }
   content {
     terraform {
@@ -47,7 +47,7 @@ generate_hcl "versions.tf" {
 # main.tf
 generate_hcl "main.tf" {
   stack_filter {
-    project_paths = ["**/repository"]
+    project_paths = ["**/github/repository"]
   }
   content {
     module "repository" {

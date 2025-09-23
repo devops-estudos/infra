@@ -37,15 +37,6 @@ generate_hcl "provider.tf" {
       cluster_ca_certificate = base64decode(data.terraform_remote_state.eks.outputs.cluster_certificate_authority_data)
       token                  = data.aws_eks_cluster_auth.cluster_auth.token
     }
-
-    provider "argocd" {
-      server_addr = data.kubernetes_service.argocd-server.status[0].load_balancer[0].ingress[0].hostname
-      username    = "admin"
-      password    = data.kubernetes_secret.argocd-initial-admin-secret.data.password
-
-      plain_text = true
-      insecure   = true
-    }
   }
 }
 
@@ -122,7 +113,7 @@ generate_hcl "main.tf" {
         chart_version = "8.5.4"
         values        = [file("./configs/argocd.yml")]
       }
-      
+
       enable_argo_rollouts = true
       argo_rollouts = {
         repository    = "https://argoproj.github.io/argo-helm"
@@ -160,10 +151,6 @@ generate_hcl "versions.tf" {
       required_version = ">= 1.3.2"
 
       required_providers {
-        argocd = {
-          source  = "argoproj-labs/argocd"
-          version = "7.11.0"
-        }
       }
     }
   }
