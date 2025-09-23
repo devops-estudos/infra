@@ -103,11 +103,33 @@ generate_hcl "main.tf" {
   }
   content {
     resource "argocd_application" "this" {
-      name            = global.name
-      project         = "default"
-      repo_url        = global.repository_url
-      target_revision = "HEAD"
-      path            = global.path
+      metadata {
+        name      = global.name
+      }
+
+      spec {
+        destination {
+          server    = "https://kubernetes.default.svc"
+          namespace = "default"
+        }
+
+        source {
+          repo_url        = global.repository_url
+          path            = "charts"
+          target_revision = "HEAD"
+          helm {
+            release_name = global.name
+            # parameter {
+            #   name  = "image.tag"
+            #   value = "1.2.3"
+            # }
+            # parameter {
+            #   name  = "someotherparameter"
+            #   value = "true"
+            # }
+          }
+        }
+      }
     }
   }
 }
