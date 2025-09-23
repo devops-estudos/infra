@@ -22,8 +22,7 @@ module "eks" {
   }
   eks_managed_node_groups = {
     main = {
-      capacity_type = "SPOT"
-      desired_size  = 2
+      desired_size = 3
       instance_types = [
         "t3a.medium",
       ]

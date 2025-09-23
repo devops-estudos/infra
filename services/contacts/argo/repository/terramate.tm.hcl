@@ -9,6 +9,10 @@ stack {
     "repository",
   ]
   id = "381db786-7fe7-4fa3-8e76-143d77d4e785"
+
+  after = [
+    "tag:addons",
+  ]
 }
 
 globals {

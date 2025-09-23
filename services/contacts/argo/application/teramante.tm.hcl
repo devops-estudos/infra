@@ -9,4 +9,8 @@ stack {
     "application",
   ]
   id = "0149fb11-1d4e-464a-9d8d-0ba37a72f72e"
+
+  after = [
+    "tag:addons",
+  ]
 }
