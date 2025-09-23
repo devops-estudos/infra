@@ -139,6 +139,14 @@ generate_hcl "main.tf" {
         }]
       }
     }
+
+    resource "helm_release" "traefik" {
+      name       = "traefik"
+      repository = "https://traefik.github.io/charts"
+      chart      = "traefik"
+      version    = "37.1.1"
+      values     = [file("./configs/traefik.yml")]
+    }
   }
 
 
@@ -153,10 +161,6 @@ generate_hcl "versions.tf" {
       required_version = ">= 1.3.2"
 
       required_providers {
-        http = {
-          source  = "hashicorp/http"
-          version = "~> 3.0"
-        }
       }
     }
   }
@@ -178,5 +182,31 @@ generate_file "configs/argocd.yml" {
         service.beta.kubernetes.io/aws-load-balancer-type: nlb
         service.beta.kubernetes.io/aws-load-balancer-nlb-target-type: ip
         service.beta.kubernetes.io/aws-load-balancer-scheme: internet-facing
+  EOF
+}
+
+generate_file "configs/traefik.yml" {
+  stack_filter {
+    project_paths = ["envs/**/eks/addons"]
+  }
+
+  content = <<-EOF
+  ingressRoute:
+    dashboard:
+      enabled: true
+      matchRule: PathPrefix(`/dashboard`) || PathPrefix(`/api`)
+      entryPoints:
+        - web
+  service:
+    annotations:
+      service.beta.kubernetes.io/aws-load-balancer-type: nlb
+      service.beta.kubernetes.io/aws-load-balancer-nlb-target-type: ip
+      service.beta.kubernetes.io/aws-load-balancer-scheme: internet-facing
+  log:
+    level: DEBUG
+    format: json
+  accessLogs:
+    enabled: true
+    format: json
   EOF
 }

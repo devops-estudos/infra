@@ -41,3 +41,12 @@ module "addons" {
   source                              = "aws-ia/eks-blueprints-addons/aws"
   version                             = "~> 1.0"
 }
+resource "helm_release" "traefik" {
+  chart      = "traefik"
+  name       = "traefik"
+  repository = "https://traefik.github.io/charts"
+  values = [
+    file("./configs/traefik.yml"),
+  ]
+  version = "37.1.1"
+}
