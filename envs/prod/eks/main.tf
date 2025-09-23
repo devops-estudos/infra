@@ -11,7 +11,8 @@ data "terraform_remote_state" "vpc" {
 }
 module "eks" {
   addons = {
-    coredns = {}
+    coredns          = {}
+    datadog_operator = {}
     eks-pod-identity-agent = {
       before_compute = true
     }
