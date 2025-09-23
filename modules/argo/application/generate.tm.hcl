@@ -103,11 +103,11 @@ generate_hcl "main.tf" {
   }
   content {
     resource "argocd_application" "this" {
-      name = global.name
-      project = "default"
-      repo_url = global.repository_url
+      name            = global.name
+      project         = "default"
+      repo_url        = global.repository_url
       target_revision = "HEAD"
-      path = global.path
+      path            = global.path
     }
   }
 }
