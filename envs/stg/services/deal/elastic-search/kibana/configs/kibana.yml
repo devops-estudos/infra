@@ -1,9 +1,7 @@
-
----
 apiVersion: kibana.k8s.elastic.co/v1
 kind: Kibana
 metadata:
-  name: contacts
+  name: deals
 spec:
   version: 9.1.4
   http:
@@ -17,4 +15,4 @@ spec:
         type: LoadBalancer
   count: 1
   elasticsearchRef:
-    name: contacts
+    name: deals

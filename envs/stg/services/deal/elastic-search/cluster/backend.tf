@@ -4,7 +4,7 @@ terraform {
   backend "remote" {
     organization = "devops-studies"
     workspaces {
-      name = "dev-us-east-1-eks-addons"
+      name = "deals-elastic-search-cluster"
     }
   }
 }

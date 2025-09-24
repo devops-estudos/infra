@@ -21,7 +21,7 @@ generate:  ## Generate the Terraform code
 format:  ## Format the Terramate code
 	@terramate fmt
 destroy:  ## Destroy the infrastructure
-	@terramate run --reverse -- terraform destroy
+	@terramate run --reverse --parallel 5 -- terraform destroy -auto-approve
 generate-ids:  ## Generate the IDs of the stacks
 	@terramate create --ensure-stack-ids
 

@@ -5,7 +5,7 @@ data "terraform_remote_state" "vpc" {
   config = {
     organization = "devops-studies"
     workspaces = {
-      name = "dev-us-east-1-vpc"
+      name = "stg-us-east-1-vpc"
     }
   }
 }
@@ -14,7 +14,7 @@ data "terraform_remote_state" "eks" {
   config = {
     organization = "devops-studies"
     workspaces = {
-      name = "dev-us-east-1-eks"
+      name = "stg-us-east-1-eks"
     }
   }
 }
@@ -22,6 +22,7 @@ data "aws_eks_cluster_auth" "cluster_auth" {
   name = data.terraform_remote_state.eks.outputs.cluster_name
 }
 data "kubernetes_secret" "argocd-initial-admin-secret" {
+  count = var.enable_argocd ? 1 : 0
   depends_on = [
     module.addons.argocd,
   ]
@@ -31,6 +32,7 @@ data "kubernetes_secret" "argocd-initial-admin-secret" {
   }
 }
 data "kubernetes_service" "argocd-server" {
+  count = var.enable_argocd ? 1 : 0
   depends_on = [
     module.addons.argocd,
   ]

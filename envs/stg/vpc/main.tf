@@ -8,7 +8,7 @@ module "vpc" {
   ]
   cidr                    = "10.0.0.0/16"
   map_public_ip_on_launch = true
-  name                    = "dev-us-east-1-vpc"
+  name                    = "stg-us-east-1-vpc"
   private_subnets = [
     "10.0.1.0/24",
     "10.0.2.0/24",

@@ -34,16 +34,17 @@ module "addons" {
   cluster_endpoint                    = data.terraform_remote_state.eks.outputs.cluster_endpoint
   cluster_name                        = data.terraform_remote_state.eks.outputs.cluster_name
   cluster_version                     = data.terraform_remote_state.eks.outputs.cluster_version
-  enable_argo_rollouts                = true
-  enable_argocd                       = true
-  enable_aws_gateway_api_controller   = true
-  enable_aws_load_balancer_controller = true
+  enable_argo_rollouts                = var.enable_argo_rollouts
+  enable_argocd                       = var.enable_argocd
+  enable_aws_gateway_api_controller   = var.enable_aws_gateway_api_controller
+  enable_aws_load_balancer_controller = var.enable_aws_load_balancer_controller
   oidc_provider_arn                   = data.terraform_remote_state.eks.outputs.oidc_provider_arn
   source                              = "aws-ia/eks-blueprints-addons/aws"
   version                             = "~> 1.0"
 }
 resource "helm_release" "traefik" {
   chart      = "traefik"
+  count      = var.enable_traefik ? 1 : 0
   name       = "traefik"
   repository = "https://traefik.github.io/charts"
   values = [
@@ -51,6 +52,15 @@ resource "helm_release" "traefik" {
   ]
   version = "37.1.1"
 }
+resource "helm_release" "elastic-operator" {
+  chart      = "eck-operator"
+  count      = var.enable_elastic_operator ? 1 : 0
+  name       = "elastic-operator"
+  namespace  = "elastic-system"
+  repository = "https://elastic.github.io/helm-charts"
+  version    = "3.1.0"
+}
 resource "kubernetes_manifest" "datadog" {
+  count    = var.enable_datadog ? 1 : 0
   manifest = yamldecode(file("./configs/datadog.yml"))
 }

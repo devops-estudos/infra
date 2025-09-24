@@ -1,5 +1,8 @@
 # Import the Terramate files
 import {
+  source = "./envs/**/terramate.tm.hcl"
+}
+import {
   source = "./modules/**/*/generate.tm.hcl"
 }
 

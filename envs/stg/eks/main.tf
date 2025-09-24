@@ -5,7 +5,7 @@ data "terraform_remote_state" "vpc" {
   config = {
     organization = "devops-studies"
     workspaces = {
-      name = "dev-us-east-1-vpc"
+      name = "stg-us-east-1-vpc"
     }
   }
 }
@@ -23,8 +23,8 @@ module "eks" {
     }
   }
   eks_managed_node_groups = {
-    es_chats = {
-      desired_size = 3
+    elastic-deals = {
+      desired_size = 2
       instance_types = [
         "c5d.large",
       ]
@@ -32,62 +32,17 @@ module "eks" {
         "aws.amazon.com/eks-local-ssd" = "true"
       }
       max_size = 3
-      min_size = 3
-      tags = {
-        Name = "dev-es-chats"
-      }
+      min_size = 1
       taints = {
-        es-chats = {
+        cluster-name = {
           effect = "NO_SCHEDULE"
-          key    = "dedicated"
-          value  = "chats"
-        }
-      }
-    }
-    es_contatos = {
-      desired_size = 3
-      instance_types = [
-        "c5d.large",
-      ]
-      labels = {
-        "aws.amazon.com/eks-local-ssd" = "true"
-      }
-      max_size = 3
-      min_size = 3
-      tags = {
-        Name = "dev-es-contatos"
-      }
-      taints = {
-        es-contatos = {
-          effect = "NO_SCHEDULE"
-          key    = "dedicated"
-          value  = "contatos"
-        }
-      }
-    }
-    es_deals = {
-      desired_size = 3
-      instance_types = [
-        "c5d.large",
-      ]
-      labels = {
-        "aws.amazon.com/eks-local-ssd" = "true"
-      }
-      max_size = 3
-      min_size = 3
-      tags = {
-        Name = "dev-es-deals"
-      }
-      taints = {
-        es-deals = {
-          effect = "NO_SCHEDULE"
-          key    = "dedicated"
+          key    = "name"
           value  = "deals"
         }
       }
     }
     main = {
-      desired_size = 3
+      desired_size = 1
       instance_types = [
         "t3a.medium",
       ]
@@ -99,7 +54,7 @@ module "eks" {
   enable_irsa                              = true
   endpoint_public_access                   = true
   kubernetes_version                       = "1.33"
-  name                                     = "dev-us-east-1-eks"
+  name                                     = "stg-us-east-1-eks"
   source                                   = "terraform-aws-modules/eks/aws"
   subnet_ids                               = data.terraform_remote_state.vpc.outputs.public_subnets
   version                                  = "21.2.0"

@@ -1,4 +1,4 @@
 globals {
-  env    = "dev"
+  env    = "stg"
   region = "us-east-1"
 }

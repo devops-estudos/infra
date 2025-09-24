@@ -10,10 +10,10 @@ spec:
       apiSecret:
         secretName: "datadog-secret"
         keyName: "api-key"
-    clusterName: "dev-us-east-1-eks"
+    clusterName: "stg-us-east-1-eks"
     registry: "public.ecr.aws/datadog"
     tags:
-      - "env:dev"
+      - "env:stg"
   features:
     apm:
       instrumentation:

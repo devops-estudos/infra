@@ -76,6 +76,7 @@ generate_hcl "data.tf" {
     ## ArgoCD
     data "kubernetes_secret" "argocd-initial-admin-secret" {
       depends_on = [module.addons.argocd]
+      count      = var.enable_argocd ? 1 : 0
       metadata {
         name      = "argocd-initial-admin-secret"
         namespace = "argocd"
@@ -83,7 +84,7 @@ generate_hcl "data.tf" {
     }
     data "kubernetes_service" "argocd-server" {
       depends_on = [module.addons.argocd]
-
+      count      = var.enable_argocd ? 1 : 0
       metadata {
         name      = "argo-cd-argocd-server"
         namespace = "argocd"
@@ -107,21 +108,21 @@ generate_hcl "main.tf" {
       cluster_version   = data.terraform_remote_state.eks.outputs.cluster_version
       oidc_provider_arn = data.terraform_remote_state.eks.outputs.oidc_provider_arn
 
-      enable_argocd = true
+      enable_argocd = var.enable_argocd
       argocd = {
         repository    = "https://argoproj.github.io/argo-helm"
         chart_version = "8.5.4"
         values        = [file("./configs/argocd.yml")]
       }
 
-      enable_argo_rollouts = true
+      enable_argo_rollouts = var.enable_argo_rollouts
       argo_rollouts = {
         repository    = "https://argoproj.github.io/argo-helm"
         chart_version = "2.40.4"
         values        = [file("./configs/argo-rollouts.yml")]
       }
 
-      enable_aws_load_balancer_controller = true
+      enable_aws_load_balancer_controller = var.enable_aws_load_balancer_controller
       aws_load_balancer_controller = {
         set = [
           {
@@ -131,7 +132,7 @@ generate_hcl "main.tf" {
         ]
       }
 
-      enable_aws_gateway_api_controller = true
+      enable_aws_gateway_api_controller = var.enable_aws_gateway_api_controller
       aws_gateway_api_controller = {
         set = [{
           name  = "clusterVpcId"
@@ -141,27 +142,64 @@ generate_hcl "main.tf" {
     }
 
     resource "helm_release" "traefik" {
+      count      = var.enable_traefik ? 1 : 0
       name       = "traefik"
       repository = "https://traefik.github.io/charts"
       chart      = "traefik"
       version    = "37.1.1"
       values     = [file("./configs/traefik.yml")]
-
     }
-    
-    # resource "helm_release" "elastic-operator" {
-    #   name       = "elastic-operator"
-    #   repository = "https://elastic.github.io/helm-charts"
-    #   chart      = "eck-operator"
-    #   version    = "2.10.0"
-    #   namespace  = "elastic-system"
-    # }
+
+    resource "helm_release" "elastic-operator" {
+      count      = var.enable_elastic_operator ? 1 : 0
+      name       = "elastic-operator"
+      repository = "https://elastic.github.io/helm-charts"
+      chart      = "eck-operator"
+      version    = "3.1.0"
+      namespace  = "elastic-system"
+    }
 
     resource "kubernetes_manifest" "datadog" {
+      count    = var.enable_datadog ? 1 : 0
       manifest = yamldecode(file("./configs/datadog.yml"))
     }
   }
+}
 
+generate_hcl "variables.tf" {
+  stack_filter {
+    project_paths = ["envs/**/eks/addons"]
+  }
+  content {
+    variable "enable_argocd" {
+      type    = bool
+      default = false
+    }
+    variable "enable_argo_rollouts" {
+      type    = bool
+      default = false
+    }
+    variable "enable_aws_load_balancer_controller" {
+      type    = bool
+      default = false
+    }
+    variable "enable_aws_gateway_api_controller" {
+      type    = bool
+      default = false
+    }
+    variable "enable_traefik" {
+      type    = bool
+      default = false
+    }
+    variable "enable_elastic_operator" {
+      type    = bool
+      default = false
+    }
+    variable "enable_datadog" {
+      type    = bool
+      default = false
+    }
+  }
 
 }
 

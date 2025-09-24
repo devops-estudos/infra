@@ -70,27 +70,28 @@ generate_hcl "main.tf" {
         vpc-cni = {
           before_compute = true
         }
-        datadog_operator = {}
+        datadog_operator   = {}
         aws-ebs-csi-driver = {}
       }
 
       eks_managed_node_groups = {
         main = {
-          desired_size   = 3
+          desired_size   = 1
           instance_types = ["t3a.medium"]
           max_size       = 3
           min_size       = 1
         }
-        
-        es_deals = {
-          desired_size   = 3
+
+
+        elastic-deals = {
+          desired_size   = 2
           instance_types = ["c5d.large"]
           max_size       = 3
-          min_size       = 3
+          min_size       = 1
 
           taints = {
-            "es-deals" = {
-              key    = "dedicated"
+            "cluster-name" = {
+              key    = "name"
               value  = "deals"
               effect = "NO_SCHEDULE"
             }
@@ -98,55 +99,6 @@ generate_hcl "main.tf" {
 
           labels = {
             "aws.amazon.com/eks-local-ssd" = "true"
-          }
-
-          tags = {
-            Name = "${global.env}-es-deals"
-          }
-        }
-
-        es_contatos = {
-          desired_size   = 3
-          instance_types = ["c5d.large"]
-          max_size       = 3
-          min_size       = 3
-
-          taints = {
-            "es-contatos" = {
-              key    = "dedicated"
-              value  = "contatos"
-              effect = "NO_SCHEDULE"
-            }
-          }
-
-          labels = {
-            "aws.amazon.com/eks-local-ssd" = "true"
-          }
-
-          tags = {
-            Name = "${global.env}-es-contatos"
-          }
-        }
-
-        es_chats = {
-          desired_size   = 3
-          instance_types = ["c5d.large"]
-          max_size       = 3
-          min_size       = 3
-
-          taints = {
-            "es-chats" = {
-              key    = "dedicated"
-              value  = "chats"
-              effect = "NO_SCHEDULE"
-            }
-          }
-
-          labels = {
-            "aws.amazon.com/eks-local-ssd" = "true"
-          }
-          tags = {
-            Name = "${global.env}-es-chats"
           }
         }
       }
