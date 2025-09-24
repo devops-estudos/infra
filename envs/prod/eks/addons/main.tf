@@ -5,7 +5,7 @@ module "addons" {
     repository    = "https://argoproj.github.io/argo-helm"
     chart_version = "2.40.4"
     values = [
-      file("./configs/argoc-rollouts.yml"),
+      file("./configs/argo-rollouts.yml"),
     ]
   }
   argocd = {
@@ -50,4 +50,7 @@ resource "helm_release" "traefik" {
     file("./configs/traefik.yml"),
   ]
   version = "37.1.1"
+}
+resource "kubernetes_manifest" "datadog" {
+  manifest = yamldecode(file("./configs/datadog.yml"))
 }

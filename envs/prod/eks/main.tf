@@ -11,8 +11,9 @@ data "terraform_remote_state" "vpc" {
 }
 module "eks" {
   addons = {
-    coredns          = {}
-    datadog_operator = {}
+    aws-ebs-csi-driver = {}
+    coredns            = {}
+    datadog_operator   = {}
     eks-pod-identity-agent = {
       before_compute = true
     }
@@ -22,6 +23,69 @@ module "eks" {
     }
   }
   eks_managed_node_groups = {
+    es_chats = {
+      desired_size = 3
+      instance_types = [
+        "c5d.large",
+      ]
+      labels = {
+        "aws.amazon.com/eks-local-ssd" = "true"
+      }
+      max_size = 3
+      min_size = 3
+      tags = {
+        Name = "dev-es-chats"
+      }
+      taints = {
+        es-chats = {
+          effect = "NO_SCHEDULE"
+          key    = "dedicated"
+          value  = "chats"
+        }
+      }
+    }
+    es_contatos = {
+      desired_size = 3
+      instance_types = [
+        "c5d.large",
+      ]
+      labels = {
+        "aws.amazon.com/eks-local-ssd" = "true"
+      }
+      max_size = 3
+      min_size = 3
+      tags = {
+        Name = "dev-es-contatos"
+      }
+      taints = {
+        es-contatos = {
+          effect = "NO_SCHEDULE"
+          key    = "dedicated"
+          value  = "contatos"
+        }
+      }
+    }
+    es_deals = {
+      desired_size = 3
+      instance_types = [
+        "c5d.large",
+      ]
+      labels = {
+        "aws.amazon.com/eks-local-ssd" = "true"
+      }
+      max_size = 3
+      min_size = 3
+      tags = {
+        Name = "dev-es-deals"
+      }
+      taints = {
+        es-deals = {
+          effect = "NO_SCHEDULE"
+          key    = "dedicated"
+          value  = "deals"
+        }
+      }
+    }
     main = {
       desired_size = 3
       instance_types = [
@@ -29,16 +93,6 @@ module "eks" {
       ]
       max_size = 3
       min_size = 1
-      security_group_ingress_rules = {
-        argocd = {
-          cidr_ipv4   = "0.0.0.0/0"
-          description = "ArgoCD"
-          from_port   = 8080
-          name        = "argocd"
-          protocol    = "tcp"
-          to_port     = 8080
-        }
-      }
     }
   }
   enable_cluster_creator_admin_permissions = true

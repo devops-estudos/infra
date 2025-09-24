@@ -1,0 +1,87 @@
+---
+# Only create this for K8s 1.9+
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: nvme-disks
+provisioner: kubernetes.io/no-provisioner
+volumeBindingMode: WaitForFirstConsumer
+# Supported policies: Delete, Retain
+reclaimPolicy: Delete
+---
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: gp3
+  annotations:
+    storageclass.kubernetes.io/is-default-class: "true"
+provisioner: kubernetes.io/aws-ebs
+parameters:
+  type: gp3
+  fsType: ext4
+  encrypted: "true" # optional, set to false if you don't want encryption
+  iops: "3000" # optional, default 3000 for gp3
+  throughput: "125" # optional, default 125 MiB/s
+reclaimPolicy: Delete
+volumeBindingMode: WaitForFirstConsumer
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: nvme-pv
+spec:
+  capacity:
+    storage: 50Gi
+  accessModes:
+    - ReadWriteOnce
+  hostPath:
+    path: /dev/nvme0n1
+---
+apiVersion: elasticsearch.k8s.elastic.co/v1
+kind: Elasticsearch
+metadata:
+  name: deals-elasticsearch
+spec:
+  version: 9.1.4
+  nodeSets:
+    - name: default
+      count: 1
+      config:
+        node.store.allow_mmap: false
+      podTemplate:
+        spec:
+          containers:
+            - name: elasticsearch
+              securityContext:
+                privileged: true
+              volumeMounts:
+                - name: local-nvme
+                  mountPath: /usr/share/elasticsearch/data
+          tolerations:
+            - key: "dedicated"
+              operator: "Equal"
+              value: "chats"
+              effect: "NoSchedule"
+          volumes:
+            - name: local-nvme
+              hostPath:
+                path: /pv-disks/1b238769-9cc3-4ce1-b4d7-318aa4959e2b
+---
+apiVersion: elasticsearch.k8s.elastic.co/v1
+kind: Elasticsearch
+metadata:
+  name: quickstart
+spec:
+  version: 9.1.4
+  nodeSets:
+    - name: default
+      count: 1
+      config:
+        node.store.allow_mmap: false
+      podTemplate:
+        spec:
+          tolerations:
+            - key: dedicated
+              operator: Equal
+              value: chats
+              effect: NoSchedule

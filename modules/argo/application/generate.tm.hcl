@@ -104,7 +104,7 @@ generate_hcl "main.tf" {
   content {
     resource "argocd_application" "this" {
       metadata {
-        name      = global.name
+        name = global.name
       }
 
       spec {

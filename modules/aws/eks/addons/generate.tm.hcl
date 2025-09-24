@@ -118,7 +118,7 @@ generate_hcl "main.tf" {
       argo_rollouts = {
         repository    = "https://argoproj.github.io/argo-helm"
         chart_version = "2.40.4"
-        values        = [file("./configs/argoc-rollouts.yml")]
+        values        = [file("./configs/argo-rollouts.yml")]
       }
 
       enable_aws_load_balancer_controller = true
@@ -146,6 +146,19 @@ generate_hcl "main.tf" {
       chart      = "traefik"
       version    = "37.1.1"
       values     = [file("./configs/traefik.yml")]
+
+    }
+    
+    # resource "helm_release" "elastic-operator" {
+    #   name       = "elastic-operator"
+    #   repository = "https://elastic.github.io/helm-charts"
+    #   chart      = "eck-operator"
+    #   version    = "2.10.0"
+    #   namespace  = "elastic-system"
+    # }
+
+    resource "kubernetes_manifest" "datadog" {
+      manifest = yamldecode(file("./configs/datadog.yml"))
     }
   }
 
@@ -185,7 +198,7 @@ generate_file "configs/argocd.yml" {
   EOF
 }
 
-generate_file "configs/argoc-rollouts.yml" {
+generate_file "configs/argo-rollouts.yml" {
   stack_filter {
     project_paths = ["envs/**/eks/addons"]
   }
@@ -219,5 +232,51 @@ generate_file "configs/traefik.yml" {
     level: DEBUG
   accessLog:
     format: json
+  EOF
+}
+
+generate_file "configs/datadog.yml" {
+  stack_filter {
+    project_paths = ["envs/**/eks/addons"]
+  }
+
+  content = <<-EOF
+  kind: "DatadogAgent"
+  apiVersion: "datadoghq.com/v2alpha1"
+  metadata:
+    name: "datadog"
+    namespace: "datadog-agent"
+  spec:
+    global:
+      site: "datadoghq.com"
+      credentials:
+        apiSecret:
+          secretName: "datadog-secret"
+          keyName: "api-key"
+      clusterName: "${global.env}-${global.region}-eks"
+      registry: "public.ecr.aws/datadog"
+      tags:
+        - "env:${global.env}"
+    features:
+      apm:
+        instrumentation:
+          enabled: true
+          targets:
+            - name: "default-target"
+              namespaceSelector:
+                matchNames:
+                  - "default"
+              ddTraceVersions:
+                java: "1"
+                python: "3"
+                js: "5"
+                php: "1"
+                dotnet: "3"
+                ruby: "2"
+      logCollection:
+        enabled: true
+        containerCollectAll: true
+      usm:
+        enabled: true
   EOF
 }
